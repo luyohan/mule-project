@@ -1,0 +1,30 @@
+{
+  "headers": {
+    "cache-control": "no-cache, no-store, must-revalidate, pre-check=0, post-check=0",
+    "content-disposition": "attachment; filename=json.json",
+    "content-length": "43707",
+    "content-type": "application/json;charset=utf-8",
+    "date": "Sun, 13 Jun 2021 23:07:04 GMT",
+    "expires": "Tue, 31 Mar 1981 05:00:00 GMT",
+    "last-modified": "Sun, 13 Jun 2021 23:07:04 GMT",
+    "pragma": "no-cache",
+    "server": "tsa_b",
+    "set-cookie": "personalization_id=\"v1_1OItdxAfu87jm2mKKP6b2Q==\"; Max-Age=63072000; Expires=Tue, 13 Jun 2023 23:07:04 GMT; Path=/; Domain=.twitter.com; Secure; SameSite=None",
+    "set-cookie": "guest_id=v1%3A162362562474694460; Max-Age=63072000; Expires=Tue, 13 Jun 2023 23:07:04 GMT; Path=/; Domain=.twitter.com; Secure; SameSite=None",
+    "status": "200 OK",
+    "strict-transport-security": "max-age=631138519",
+    "x-access-level": "read",
+    "x-connection-hash": "c70475fcb303657991f95f0ea0d55a0a",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "SAMEORIGIN",
+    "x-rate-limit-limit": "450",
+    "x-rate-limit-remaining": "443",
+    "x-rate-limit-reset": "1623625893",
+    "x-response-time": "90",
+    "x-transaction": "00d9f886008a7ed1",
+    "x-twitter-response-tags": "BouncerCompliant",
+    "x-xss-protection": "0"
+  },
+  "reasonPhrase": "OK",
+  "statusCode": 200
+}

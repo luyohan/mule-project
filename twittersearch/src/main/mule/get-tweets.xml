@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="get-tweetsFlow" doc:id="4b799daf-80d9-4a08-bd60-a55d339e5a28" >
+		<logger level="INFO" doc:name="Tweet Flow Start" doc:id="6e09574c-6a0b-4a3e-99d5-a4f5256ab7c6" message="Tweet Flow Start"/>
+		<set-variable value="#[if (attributes.queryParams.hours != null) 
+	attributes.queryParams.hours  
+else
+	p('query.parameters.default.hours')]" doc:name="Hours" doc:id="a7fea23b-d02e-409b-8dde-20c8f8947821" variableName="hour" />
+		<http:request method="GET" doc:name="Twitter API Request" doc:id="259eaac2-dd0f-41bb-a5a0-cc4e7c309df6" config-ref="HTTP_Request_Twitter" path="/tweets.json">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer " ++ p('token')
+}]]]></http:headers>
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"q" : attributes.queryParams.keyword
+}]]]></http:query-params>
+		</http:request>
+		<logger level="INFO" doc:name="Twitter Response" doc:id="bff3086b-caf2-46cc-abc6-f3b062fa97d9" message="#[payload]"/>
+		<ee:transform doc:name="Tweets Transformation" doc:id="843c896f-a01e-4214-af8e-0f65cffe8103" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+
+type hoursFormat =  String{format: "HH"}
+type Days = String {format: "dd"}
+var numberOfDays = now() as Days
+
+fun getTimeDifference(twitterTime: String) =  ((now() as hoursFormat) + 5) - (twitterTime[11 to 12])
+
+var filteredTweets = payload.statuses filter ((getTimeDifference($.created_at)  <= vars.hour) and (numberOfDays == $.created_at[8 to 9])) map  {
+	text: $.text,
+	url: $.entities.urls[0].url,
+	author: $.user.screen_name
+	
+}
+
+---
+
+if (sizeOf(filteredTweets) >= 10) filteredTweets[0 to 9]
+else filteredTweets
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Tweet Flow End" doc:id="c1e48eca-a91d-4efd-a07d-653b76c39974" message="Tweet Flow End" />
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="428988f5-6865-4862-a962-065bd06b4c07" type="ANY">
+				<logger level="ERROR" doc:name="Tweets Flow Error" doc:id="a140fdc7-1965-4a1a-a126-3798a9dc5477" message="#[error.detailedDescription]"/>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+</mule>

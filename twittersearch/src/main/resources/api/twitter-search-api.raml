@@ -1,0 +1,76 @@
+#%RAML 1.0
+title: Twitter Search Api
+
+types:
+  Tweet: !include DataType/tweets-datatype.raml
+  Hashtag: !include DataType/hashtag-datatype.raml
+
+traits:
+  client-access:
+    headers:
+      client_id: 
+        type: string
+        required: false
+      client_secret:
+        type: string
+        required: false
+
+/tweets:
+  get:
+    queryParameters:
+      keyword:
+        displayName: keyword
+        description: A keyword to search tweets
+        type: string
+        required: true
+        example: Nasa   
+      hours:
+        displayName: hours
+        description: Number of hours
+        required: false
+        type: integer
+        example: 5   
+    is: [client-access]      
+    responses:
+      200:
+        body:
+          application/json:
+            type: array
+            items: Tweet 
+            example: !include examples/tweets-example.raml
+      404:
+        body:
+          application/json:
+            example:
+              {
+                "message": "Data Not Found"
+              }
+/hashtags:
+  get:
+    queryParameters:
+      keyword:
+        displayName: keyword
+        description: 
+        required: true
+        type: string
+        example: Nasa
+    is: [client-access]
+    responses:
+      200:
+        body:
+          application/json:
+            type: array
+            items: Hashtag
+            example: !include examples/hashtag-example.raml
+      404:
+        body:
+          application/json:
+            example:
+              {
+                "message": "Data Not Found"
+              }
+              
+              
+            
+          
+      

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
+	 <!-- Twitter HTTP Listener configuration -->
+	 <http:listener-config name="twitter-search-api-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="${http.port}" />
+    </http:listener-config>
+    
+    <!-- Twitter HTTP Request configuration -->
+	<http:request-config name="HTTP_Request_Twitter" doc:name="HTTP Request configuration" doc:id="cc0cd810-28fa-469f-98c7-b24e42a945d2" basePath="${twitter.resourcepath}" >
+		<http:request-connection protocol="HTTPS" host="${twitter.host}" />
+	</http:request-config>
+	
+	<!-- Properties configuration -->
+	<configuration-properties doc:name="Configuration properties" doc:id="7f9f669f-eb12-4997-8c1d-21a18e6fbbfe" file="application.yaml" />
+	<api-gateway:autodiscovery apiId="16965000" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="0ddf95a6-881f-4dca-b745-8bda641a46ba" flowRef="twitter-search-api-main" />
+<!-- 	<api-gateway:autodiscovery apiId="16964117" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="bb3a51eb-f023-42d5-8e60-e24e4f19036f" flowRef="twitter-search-api-main" /> -->
+	
+	</mule>

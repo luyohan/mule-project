@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="get-hashtagsFlow" doc:id="6c0654b1-0294-45aa-bdef-7c6c51d6ac4b" >
+		<logger level="INFO" doc:name="Hashtag Flow Start" doc:id="552ae0c3-276c-4550-82a2-e4ba38ae0f2b" message="Hashtag Flow Start"/>
+		<http:request method="GET" doc:name="Twitter API Request" doc:id="078bbdf3-6c15-4abf-bc2e-e0d5cae931d8" config-ref="HTTP_Request_Twitter" path="/tweets.json">
+			<http:headers ><![CDATA[#[{
+	"Authorization": "Bearer " ++ p('token')
+}]]]></http:headers>
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"result_type" : attributes.queryParams.'result_type',
+	"q" : attributes.queryParams.keyword
+}]]]></http:query-params>
+		</http:request>
+		<logger level="INFO" doc:name="Twitter Response" doc:id="24083e08-5dfa-438e-8454-ae1e167cd65c" message="#[payload]"/>
+		<ee:transform doc:name="Hashtag Transformation" doc:id="98d1081b-2e38-4d4f-8d25-587460833a97" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+
+---
+
+((payload.statuses filter(sizeOf ($.entities.hashtags) > 0) map ((tweet) -> {
+	(tweet.entities.hashtags)
+}) reduce ($$ ++ $)).*text distinctBy $) map {
+	hashtagName: $
+}
+	
+	
+	
+	
+	
+	]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Hashtag Flow End" doc:id="96711ba0-116c-437c-a7e1-cc1e7ca1cec8" message="Hashtag Flow End" />
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="38548173-a0f7-49fd-868f-37bd223948f3" >
+				<logger level="INFO" doc:name="Hashtags Flow Error" doc:id="b99f8e49-a114-4593-903a-a54d809604fc" message="#[error.description]"/>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+</mule>

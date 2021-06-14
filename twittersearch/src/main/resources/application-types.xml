@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="hours" format="java">
+      <types:shape format="java" element="org.mule.extension.http.api.HttpRequestAttributes"/>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#a7fea23b-d02e-409b-8dde-20c8f8947821">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:variables>
+          <types:variable name="hours" type="hours"/>
+        </types:variables>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>
